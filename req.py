@@ -14,3 +14,4 @@ new_post = {
 response_post = req.post('https://jsonplaceholder.typicode.com/posts', json=new_post)
 print(f"POST Status: {response_post.status_code}")
 print(f"POST Response: {response_post.json()}")
+
