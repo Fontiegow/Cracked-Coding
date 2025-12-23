@@ -3,3 +3,4 @@ uvicorn app.main:app --reload --port 8000
 
 docker run -d --name pg -e POSTGRES_USER=app -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=appdb -p 5432:5432 postgres:15
 
+docker exec -it pg psql -U app -d appdb -c "\dt"

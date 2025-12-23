@@ -1,6 +1,7 @@
 # app/main.py
 from fastapi import FastAPI
 from fastapi import FastAPI
+from app.models import AIModelDB 
 from app.database import init_db
 
 app = FastAPI()
