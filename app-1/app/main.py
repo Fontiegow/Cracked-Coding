@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi import FastAPI
 from app.models import AIModelDB 
 from app.database import init_db
+from app.models import AIModelDB, User 
 
 app = FastAPI()
 @app.get("/")
