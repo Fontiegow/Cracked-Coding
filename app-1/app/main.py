@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .database import init_db
 from . import crud, schemas, deps, models
+from fastapi.security import OAuth2PasswordRequestForm
+from . import auth
 
 app = FastAPI()
 
@@ -29,3 +31,26 @@ def read_user(user_id: int, db: Session = Depends(deps.get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
+
+# 3. Login and get JWT token
+@app.post("/login")
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(deps.get_db)):
+    # 1. find the user by email
+    user = crud.get_user_by_email(db, email=form_data.username) # OAuth2 در فیلد username ایمیل را می‌فرستد
+    
+    # 2. Check password
+    if not user or not crud.verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+        )
+
+    # 3. create access token
+    access_token = auth.create_access_token(data={"sub": user.email})
+    
+    return {"access_token": access_token, "token_type": "bearer"}
+
+# Test endpoint to get current user
+@app.get("/users/me", response_model=schemas.UserOut)
+def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
+    return current_user
