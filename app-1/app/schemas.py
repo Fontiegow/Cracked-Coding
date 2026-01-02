@@ -11,3 +11,10 @@ class UserOut(BaseModel):
     class Config:
         # orm_mode = True
         from_attributes = True
+
+from pydantic import BaseModel
+
+class AIModel(BaseModel):
+    name: str
+    framework: str 
+    accuracy: float

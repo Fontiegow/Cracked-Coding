@@ -54,3 +54,26 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 @app.get("/users/me", response_model=schemas.UserOut)
 def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
     return current_user
+
+
+# app/main.py
+from .auth import get_current_user
+
+# 
+@app.post("/models/", status_code=status.HTTP_201_CREATED)
+def create_ai_model(
+    model: schemas.AIModel,  # اضافه کردن schemas. قبل از نام کلاس
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(deps.get_db)
+):
+    return {
+        "message": f"Model {model.name} created successfully by {current_user.email}",
+        "data": model
+    }
+
+@app.get("/users/", response_model=list[schemas.UserOut])
+def read_all_users(
+    db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(get_current_user) 
+):
+    return db.query(models.User).all()
